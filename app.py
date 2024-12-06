@@ -7,9 +7,26 @@ import io
 import matplotlib
 matplotlib.use('Agg')
 from flask_cors import CORS
+import os;
 
 app = Flask(__name__, static_folder='build', static_url_path='/')
-CORS(app)
+
+# Allow CORS for all origins (basic setup)
+CORS(app, resources={r"/*": {"origins": "*"}})
+
+
+shapefile_path = "tl_2023_us_county/tl_2023_us_county.shp"
+
+if not os.path.exists(shapefile_path):
+    print("Shapefile not found!")
+else:
+    try:
+        gdf = gpd.read_file(shapefile_path)
+        print("Shapefile loaded successfully!")
+        print(gdf.head())
+    except Exception as e:
+        print(f"Error loading shapefile: {e}")
+
 
 @app.route('/')
 def serve_react():
